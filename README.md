@@ -1,8 +1,8 @@
 # Kotlin Phoenix
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ajacquierbret/kotlinphoenix.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.github.ajacquierbret%22%20AND%20a:%22kotlinphoenix%22)
-![badge][badge-android]
-![badge][badge-ios]
+![Android](https://img.shields.io/badge/platform-android-%23a4c639)
+![iOS](https://img.shields.io/badge/platform-ios-%23007AFF)
 
 This client is a refactored version of [JavaPhoenixClient](https://github.com/dsrees/JavaPhoenixClient) with coroutines and multiplatform support in mind.
 

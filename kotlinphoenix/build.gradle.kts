@@ -29,8 +29,8 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
     from(dokkaOutputDir)
 }
 
-val sonatypeUsername: String? = project.findProperty("sonatype.username") as String?
-val sonatypePassword: String? = project.findProperty("sonatype.password") as String?
+val sonatypeUsername: String? = project.property("sonatype.username") as String?
+val sonatypePassword: String? = project.property("sonatype.password") as String?
 
 signing {
     useGpgCmd()

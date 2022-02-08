@@ -29,6 +29,7 @@ actual class WebSocketTransport actual constructor(
                     didCloseWithCode: NSURLSessionWebSocketCloseCode,
                     reason: NSData?
                 ) {
+                    println("ON CLOSED: ${didCloseWithCode.toInt()} :: $reason")
                     readyState = Transport.ReadyState.CLOSED
                     _sharedFlow.tryEmit(SocketEvent.CloseEvent(didCloseWithCode.toInt()))
                 }

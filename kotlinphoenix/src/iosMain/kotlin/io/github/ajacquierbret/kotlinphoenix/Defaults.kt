@@ -9,17 +9,10 @@ actual object DefaultsPlatform {
         paramsClosure: PayloadClosure,
         vsn: String
     ): URL {
-        var mutableUrl = endpoint
-        // Silently replace web socket URLs with HTTP URLs.
-        if (endpoint.regionMatches(0, "ws:", 0, 3, ignoreCase = true)) {
-            mutableUrl = "http:" + endpoint.substring(3)
-        } else if (endpoint.regionMatches(0, "wss:", 0, 4, ignoreCase = true)) {
-            mutableUrl = "https:" + endpoint.substring(4)
-        }
+        val httpUrlComponents = NSURLComponents(endpoint)
 
         // Add the VSN query parameter
-        val httpUrlComponents = NSURLComponents(mutableUrl)
-        httpUrlComponents.queryItems = httpUrlComponents.queryItems?.plus(NSURLQueryItem(name = "vsn", value = vsn))
+        httpUrlComponents.queryItems = listOf(NSURLQueryItem(name = "vsn", value = vsn))
 
         // Append any additional query params
         paramsClosure.invoke()?.let {

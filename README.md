@@ -104,5 +104,5 @@ Distributed under the MIT License. See [LICENSE](https://github.com/ajacquierbre
 ## Acknowledgments
 Huge thanks to these people, they helped a lot in many different ways:
 
-- @dsrees – For the [JavaPhoenixClient](https://github.com/dsrees/JavaPhoenixClient) library on which this project is based.
-- @martinbonnin and @BoD – For their golden advices and help building the project !
+- [@dsrees](https://github.com/dsrees) – For the [JavaPhoenixClient](https://github.com/dsrees/JavaPhoenixClient) library on which this project is based.
+- [@martinbonnin](https://github.com/martinbonnin) and [@BoD](https://github.com/BoD) – For their golden advices and help building the project !

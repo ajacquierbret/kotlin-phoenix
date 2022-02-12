@@ -10,6 +10,7 @@ plugins {
 
 version = project.rootProject.version
 group = "io.github.ajacquierbret"
+description = "A Phoenix client written in Kotlin, multiplatform and backed by coroutines"
 
 kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
     binaries.all {
@@ -24,7 +25,7 @@ kotlin {
     iosSimulatorArm64()
 
     cocoapods {
-        summary = "A Phoenix client written in Kotlin, multiplatform and backed by coroutines"
+        summary = description
         homepage = "https://github.com/ajacquierbret/kotlin-phoenix/kotlinphoenix-client"
         ios.deploymentTarget = "14.1"
         framework {

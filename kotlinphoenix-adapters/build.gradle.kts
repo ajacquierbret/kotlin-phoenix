@@ -9,6 +9,7 @@ plugins {
 
 version = project.rootProject.version
 group = "io.github.ajacquierbret"
+description = "Adapters for using Kotlin Phoenix with third-party GraphQL clients"
 
 kotlin {
     android()
@@ -17,7 +18,7 @@ kotlin {
     iosSimulatorArm64()
 
     cocoapods {
-        summary = "Adapters for using Kotlin Phoenix with third-party GraphQL clients"
+        summary = description
         homepage = "https://github.com/ajacquierbret/kotlin-phoenix/kotlinphoenix-adapters"
         ios.deploymentTarget = "14.1"
         framework {

@@ -7,4 +7,5 @@ pluginManagement {
 }
 
 rootProject.name = "kotlin-phoenix"
-include(":kotlinphoenix")
+include(":kotlinphoenix-client")
+include(":kotlinphoenix-adapters")

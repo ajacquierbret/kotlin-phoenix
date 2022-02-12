@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'kotlinphoenix_adapters'
-    spec.version                  = '1.0.0'
+    spec.version                  = '1.0.3'
     spec.homepage                 = 'https://github.com/ajacquierbret/kotlin-phoenix/kotlinphoenix-adapters'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''

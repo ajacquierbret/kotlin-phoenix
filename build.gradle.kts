@@ -1,3 +1,5 @@
+version = "1.0.3"
+
 plugins {
     id("org.jetbrains.dokka") version "1.6.10"
     id("maven-publish")

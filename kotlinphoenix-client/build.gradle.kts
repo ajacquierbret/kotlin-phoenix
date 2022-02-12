@@ -8,8 +8,8 @@ plugins {
     id("signing")
 }
 
+version = project.rootProject.version
 group = "io.github.ajacquierbret"
-version = "1.0.2"
 
 kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
     binaries.all {

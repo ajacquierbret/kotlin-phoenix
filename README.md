@@ -25,7 +25,7 @@ Add the `mavenCentral` repository
 // build.gradle.kts
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 ```
 
@@ -35,11 +35,11 @@ Add the `kotlinphoenix` dependency in `commonMain` source set.
 // shared/build.gradle.kts
 
 sourceSets {
-	val commonMain by getting {
-		dependencies {
-			implementation("io.github.ajacquierbret:kotlinphoenix-$moduleName:1.0.3")
-		}
-	}
+  val commonMain by getting {
+    dependencies {
+	implementation("io.github.ajacquierbret:kotlinphoenix-$moduleName:1.0.3")
+    }
+  }
 }
 ```
 

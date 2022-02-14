@@ -1,6 +1,6 @@
 # Kotlin Phoenix
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.ajacquierbret/kotlinphoenix.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.github.ajacquierbret%22%20AND%20a:%22kotlinphoenix-client%22)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-1.0.3-%23007ec6](https://search.maven.org/search?q=g:%22io.github.ajacquierbret%22%20AND%20a:%22kotlinphoenix-client%22)
 ![Android](https://img.shields.io/badge/platform-android-%23a4c639)
 ![iOS](https://img.shields.io/badge/platform-ios-%23007AFF)
 

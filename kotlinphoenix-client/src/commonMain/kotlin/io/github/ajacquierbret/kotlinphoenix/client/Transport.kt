@@ -25,8 +25,9 @@ package io.github.ajacquierbret.kotlinphoenix.client
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.suspendCancellableCoroutine
 
-sealed class SocketEvent: Exception() {
+sealed class SocketEvent: Throwable() {
   /** Called when the Transport opens */
   object OpenEvent: SocketEvent()
   /** Called when the Transport receives an error */
@@ -64,9 +65,6 @@ interface Transport {
   /** Connect to the server */
   fun connect(): SocketFlow
 
-  /** Connect to the server and suspends until the socket is open */
-  suspend fun connectSuspend(): SocketFlow
-
   /**
    * Disconnect from the Server
    *
@@ -85,18 +83,7 @@ interface Transport {
 abstract class WebSocketTransportCommon: Transport {
   internal val _sharedFlow: MutableSharedFlow<SocketEvent> = MutableSharedFlow(8 * 1024)
   internal val sharedFlow = _sharedFlow.asSharedFlow()
-
   override var readyState: Transport.ReadyState = Transport.ReadyState.CLOSED
-
-  override suspend fun connectSuspend(): SocketFlow {
-    val connection = connect()
-
-    val event = connection.first { it is SocketEvent.OpenEvent }
-
-    if  (event is SocketEvent.OpenEvent) {
-      return connection
-    } else throw event
-  }
 }
 
 /**

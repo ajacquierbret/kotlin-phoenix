@@ -156,34 +156,33 @@ abstract class SocketCommon(
     // Now create the connection transport and attempt to connect
     connection = transport(endpointUrl)
 
-    try {
-      val socket = connection?.connectSuspend()
+    val socket = connection?.connect()
 
-      onConnectionOpened()
+    socket?.take(1)?.collect {
+      when (it) {
+        is SocketEvent.OpenEvent -> onConnectionOpened()
+        is SocketEvent.FailureEvent -> throw it
+        else -> Unit
+      }
+    }
 
-      scope.launch(CoroutineName("SOCKET_INTERNAL_LISTENER")) {
-        socket?.collect {
-          when (it) {
-            is SocketEvent.FailureEvent -> {
-              onConnectionError(it.throwable, it.response)
+    scope.launch(CoroutineName("SOCKET_INTERNAL_LISTENER")) {
+      socket?.collect {
+        when (it) {
+          is SocketEvent.FailureEvent -> onConnectionError(it.throwable, it.response)
+          is SocketEvent.MessageEvent -> onConnectionMessage(it.text)
+          is SocketEvent.CloseEvent -> {
+            logItems("Transport: close :: ${it.code}")
+            if (!closeWasClean) {
+              onConnectionClosed(it.code)
             }
-            is SocketEvent.MessageEvent -> onConnectionMessage(it.text)
-            is SocketEvent.CloseEvent -> {
-              if (!closeWasClean) {
-                onConnectionClosed(it.code)
-              }
-              cancel()
-            }
-            else -> Unit
+            cancel()
           }
         }
       }
-
-      return socket
-    } catch (error: SocketEvent.FailureEvent) {
-      onConnectionError(error.throwable, error.response)
-      throw error
     }
+
+    return socket
   }
 
   fun disconnect(
@@ -393,7 +392,6 @@ abstract class SocketCommon(
   }
 
   private fun onConnectionClosed(code: Int) {
-    logItems("Transport: close :: $code")
     triggerChannelError()
 
     // Prevent the heartbeat from triggering if the socket closed

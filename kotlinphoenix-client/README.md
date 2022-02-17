@@ -21,7 +21,16 @@ val CHANNEL_TOPIC = "topic"
 
 val phxSocket = Socket(url = "ws://localhost:4000/socket", params = mapOf("token" to token), scope = coroutineScope)
 
-val connection = phxSocket.connect() ?: throw Throwable("Error while creating socket")
+// OPTIONAL: Log socket/channel operations
+phxSocket.logger = {
+    println(it)
+}
+
+val connection = try {
+	phxSocket.connect()
+} catch (error: SocketEvent.FailureEvent) {
+	throw error.throwable
+}
 
 // Suspends until websocket is connected and return a hot SharedFlow collector
 
@@ -66,10 +75,4 @@ channel.push(
 
 channel.leave()
 phxSocket.disconnect()
-
-// OPTIONAL: Log socket/channel operations
-
-phxSocket.logger = {
-    println(it)
-}
 ```

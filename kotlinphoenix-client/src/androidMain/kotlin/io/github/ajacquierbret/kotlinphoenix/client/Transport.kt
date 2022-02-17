@@ -44,11 +44,9 @@ actual class WebSocketTransport actual constructor(
                 _sharedFlow.tryEmit(SocketEvent.MessageEvent(decode(text)))
             }
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                println("ON CLOSING: $code :: $reason")
                 readyState = Transport.ReadyState.CLOSING
             }
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                println("ON CLOSED: $code :: $reason")
                 readyState = Transport.ReadyState.CLOSED
                 _sharedFlow.tryEmit(SocketEvent.CloseEvent(code))
             }

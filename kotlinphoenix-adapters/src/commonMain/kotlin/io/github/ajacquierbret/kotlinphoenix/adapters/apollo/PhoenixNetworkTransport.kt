@@ -293,7 +293,11 @@ class PhoenixNetworkTransport private constructor(
     }
 
     /**
-     * Long-running method that creates/handles the socket lifecyle
+     * Long-running method that creates/handles the socket lifecycle
+     *
+     * @param scope the current Coroutine scope.
+     *
+     * @return [Unit]
      */
     private suspend fun supervise(scope: CoroutineScope) {
         while (true) {
@@ -357,7 +361,15 @@ class PhoenixNetworkTransport private constructor(
         }
     }
 
-    @Suppress()
+    /**
+     * Reconnects the [PhxSocket] with parameters specified by the [reconnectWith] lambda.
+     *
+     * @param scope the current Coroutine scope.
+     * @param queueMessages a boolean indicating whether or not all already registered subscriptions should try to subscribe again
+     *
+     * @return [Unit]
+     */
+    @Suppress("private")
     suspend fun reconnect(
         scope: CoroutineScope,
         queueMessages: Boolean = true,
@@ -497,7 +509,7 @@ class PhoenixNetworkTransport private constructor(
         /**
          * Configure the [PhoenixNetworkTransport] to reconnect the socket automatically when a network error happens.
          *
-         * @param queueMessages a boolean indicating wether or not all already registered subscriptions should try to subscribe again
+         * @param queueMessages a boolean indicating whether or not all already registered subscriptions should try to subscribe again
          * @param reconnectWhen a function taking the error as a parameter and returning 'true' to reconnect
          * automatically or 'false' to forward the error to all listening [Flow]
          *

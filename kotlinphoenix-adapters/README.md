@@ -33,16 +33,16 @@ fun buildParams() {
 }
  
 val phoenixNetworkTransport = PhoenixNetworkTransport.Builder()
-            .serverUrl(SERVER_URL)
-            .topic(CHANNEL_TOPIC)
-            .params(buildParams())
-            .logger { println(it) }
-            .reconnectWhen { cause ->
-            	println("Socket will try to reconnect because of: $cause")
-            	true
-            }
-            .reconnectWith { buildParams() }
-            .build()
+    .serverUrl(SERVER_URL)
+    .topic(CHANNEL_TOPIC)
+    .params(buildParams())
+    .logger { println(it) }
+    .reconnectWhen { cause ->
+    	println("Socket will try to reconnect because of: $cause")
+    	true
+    }
+    .reconnectWith { buildParams() }
+    .build()
 
 val apolloClient = ApolloClient.Builder()
     .httpServerUrl("http://localhost:4000/api")

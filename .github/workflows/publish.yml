@@ -5,17 +5,17 @@ on:
 jobs:
   Dokka:
     runs-on: ubuntu-latest
-    env:
-      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
     steps:
-      - name: Uses Checkout Action
+      - name: Check out Git repository
         uses: actions/checkout@v2
 
+      - name: Set Gradle properties
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: echo $GRADLE_PROPERTIES | base64 -d > ~/gradle.properties
+
       - name: Build documentation
-        run: ./gradlew dokkaHtmlMultiModule \
-              -Psonatype.username="$SONATYPE_USERNAME" \
-              -Psonatype.password="$SONATYPE_PASSWORD" \
+        run: ./gradlew dokkaHtmlMultiModule
 
       - name: Publish documentation
         uses: JamesIves/github-pages-deploy-action@releases/v4
@@ -24,16 +24,15 @@ jobs:
           folder: build/dokka
   Maven:
     runs-on: ubuntu-latest
-    env:
-      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set Gradle properties
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: echo $GRADLE_PROPERTIES | base64 -d > ~/gradle.properties
+
       - name: Maven Publish
-        run: ./gradlew publish \
-              -Psonatype.username="$SONATYPE_USERNAME" \
-              -Psonatype.password="$SONATYPE_PASSWORD" \
-              -Psigning.gnupg.executable=gpg \
-              -Psigning.gnupg.keyName="$GPG_KEY_NAME" \
-              -Psigning.gnupg.passphrase="$GPG_PASSPHRASE"
+        uses: samuelmeuli/action-maven-publish@v1
+        run: ./gradlew publish

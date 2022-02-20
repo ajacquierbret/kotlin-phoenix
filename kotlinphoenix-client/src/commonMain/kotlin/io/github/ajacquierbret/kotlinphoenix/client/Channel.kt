@@ -32,14 +32,14 @@ class Channel(
     val topic: String,
     params: Payload,
     internal val socket: Socket,
-    internal val socketFlow: SocketFlow,
+    private val socketFlow: SocketFlow,
     private val scope: CoroutineScope
 ): SharedFlow<Message> {
 
   //------------------------------------------------------------------------------
   // Channel Nested Enums
   //------------------------------------------------------------------------------
-  /** States of a Channel */
+  /** States of a [Channel] */
   enum class State {
     CLOSED,
     ERRORED,
@@ -48,7 +48,7 @@ class Channel(
     LEAVING
   }
 
-  /** Channel specific events */
+  /** [Channel] specific events */
   enum class Event(val value: String) {
     HEARTBEAT("heartbeat"),
     JOIN("phx_join"),
@@ -81,23 +81,23 @@ class Channel(
   override suspend fun collect(collector: FlowCollector<Message>): Nothing = channel.collect(collector)
   override val replayCache = channel.replayCache
 
-  /** Current state of the Channel */
+  /** Current state of the [Channel] */
   private var state: State = State.CLOSED
 
-  /** Timeout when attempting to join a Channel */
+  /** Timeout when attempting to [join] a [Channel] */
   private var timeout: Long = socket.timeout
 
-  /** Params passed in through constructions and provided to the JoinPush */
+  /** Params passed in through constructions and provided to the [joinPush] */
   var params: Payload = params
     set(value) {
       joinPush.payload = value
       field = value
     }
 
-  /** Set to true once the channel has attempted to join */
+  /** Set to true once the [Channel] has attempted to [join] */
   private var joinedOnce: Boolean = false
 
-  /** Push to send then attempting to join */
+  /** [Push] to send when attempting to [join] */
   private var joinPush: Push = Push(
     channel = this@Channel,
     event = Event.JOIN.value,
@@ -106,7 +106,7 @@ class Channel(
     scope = scope
   )
 
-  /** Buffer of Pushes that will be sent once the Channel's socket connects */
+  /** Buffer of [Push] that will be sent once the [Channel]'s [Socket] connects */
   private var pushBuffer: MutableList<Push> = mutableListOf()
 
   /** Timer to attempt rejoins */
@@ -115,6 +115,10 @@ class Channel(
     scope = scope
   )
 
+  /**
+   * Initializes the Channel.
+   * Will launch listeners for Socket events, join() responses and Push responses
+   */
   init {
     // Respond to socket events
     launchSocketListener()
@@ -129,36 +133,44 @@ class Channel(
   //------------------------------------------------------------------------------
   // Public Properties
   //------------------------------------------------------------------------------
-  /** The ref sent during the join message. */
+  /** The ref sent during the [joinPush]. */
   val joinRef: String? get() = joinPush.ref
 
-  /** @return True if the Channel can push messages */
+  /** @return True if the [Channel] can [push] */
   private val canPush: Boolean
     get() = socket.isConnected && isJoined
 
-  /** @return: True if the Channel has been closed */
+  /** @return: True if the [Channel] has been closed */
   val isClosed: Boolean
     get() = state == State.CLOSED
 
-  /** @return: True if the Channel experienced an error */
+  /** @return: True if the [Channel] experienced an error */
   val isErrored: Boolean
     get() = state == State.ERRORED
 
-  /** @return: True if the channel has joined */
+  /** @return: True if the [Channel] has joined */
   val isJoined: Boolean
     get() = state == State.JOINED
 
-  /** @return: True if the channel has requested to join */
+  /** @return: True if the [Channel] has requested to join */
   val isJoining: Boolean
     get() = state == State.JOINING
 
-  /** @return: True if the channel has requested to leave */
+  /** @return: True if the [Channel] has requested to leave */
   val isLeaving: Boolean
     get() = state == State.LEAVING
 
   //------------------------------------------------------------------------------
   // Public
   //------------------------------------------------------------------------------
+
+  /**
+   * Tries to join the Phoenix channel with the specified [timeout].
+   *
+   * @param timeout a [Long] value defining the duration after which a timeout event will be triggered.
+   *
+   * @return a [joinPush]
+   */
   suspend fun join(timeout: Long = this.timeout): Push {
     // Ensure that `.join()` is called only once per Channel instance
     if (joinedOnce) {
@@ -173,6 +185,17 @@ class Channel(
     return joinPush
   }
 
+  /**
+   * Tries to send the specified event and payload to bound [Channel] if it has already been joined.
+   *
+   * @throws RuntimeException if the [Channel] has not been joined.
+   *
+   * @param event the event associated to the given [payload]
+   * @param payload the payload to send through the bound [Channel]
+   * @param timeout an optional [Long] value defining the duration after which a timeout event will be triggered.
+   *
+   * @return [Push]
+   */
   suspend fun push(event: String, payload: Payload, timeout: Long = this.timeout): Push {
     if (!joinedOnce) {
       // If the Channel has not been joined, throw an exception
@@ -192,6 +215,16 @@ class Channel(
     return pushEvent
   }
 
+  /**
+   * Tries to leave the [Channel] with the specified timeout.
+   *
+   * Will try to send a [Push] to the server with an [Event.LEAVE] event
+   * and [tryEmit] an [Event.CLOSE] event to the [Channel] collector.
+   *
+   * @param timeout an optional [Long] value defining the duration after which a timeout event will be triggered.
+   *
+   * @return [Push]
+   */
   suspend fun leave(timeout: Long = this.timeout): Push {
     // Can push is dependent upon state == JOINED. Once we set it to LEAVING, then canPush
     // will return false, so instead store it _before_ starting the leave
@@ -243,6 +276,13 @@ class Channel(
   //------------------------------------------------------------------------------
   // Internal
   //------------------------------------------------------------------------------
+
+  /**
+   * Tries to emit a [Message] to the [Channel] collector.
+   *
+   * @return a [Boolean] indicating whether or not the [Message] could be emitted.
+   */
+  @Suppress("private")
   internal fun tryEmit(
       event: Event,
       payload: Payload = hashMapOf(),
@@ -250,6 +290,11 @@ class Channel(
       joinRef: String? = null
   ) = tryEmit(event.value, payload, ref, joinRef)
 
+  /**
+   * Tries to emit a [Message] to the [Channel] collector.
+   *
+   * @return a [Boolean] indicating whether or not the [Message] could be emitted.
+   */
   internal fun tryEmit(
       event: String,
       payload: Payload = hashMapOf(),
@@ -257,7 +302,14 @@ class Channel(
       joinRef: String? = null
   ) = tryEmit(Message(joinRef, ref, topic, event, payload))
 
-  internal fun tryEmit(element: Message) = _channel.tryEmit(element)
+  /**
+   * Tries to emit a [Message] to the [Channel] collector.
+   *
+   * @param message the [Message] to emit to the collector.
+   *
+   * @return a [Boolean] indicating whether or not the [Message] could be emitted.
+   */
+  internal fun tryEmit(message: Message) = _channel.tryEmit(message)
 
   /** Checks if a Message's event belongs to this Channel instance */
   internal fun isMember(message: Message): Boolean {
@@ -282,6 +334,16 @@ class Channel(
   //------------------------------------------------------------------------------
   // Private
   //------------------------------------------------------------------------------
+
+  /**
+   * Launches a Coroutine listening for [Socket] events that will either:
+   *
+   * - on [SocketEvent.OpenEvent]: Reset the [rejoinTimer] and try to [rejoin] the [Channel] if [isErrored] is True
+   * - on [SocketEvent.FailureEvent]: Reset the [rejoinTimer].
+   * - on [SocketEvent.CloseEvent]: Cancel the coroutine
+   *
+   * @return [Unit]
+   */
   private fun launchSocketListener() {
     scope.launch(CoroutineName("CHANNEL_SOCKET_LISTENER_$topic")) {
       socketFlow.collect {
@@ -300,6 +362,17 @@ class Channel(
     }
   }
 
+  /**
+   * Launches a Coroutine listening for a [joinPush] event that will either:
+   *
+   * - on "ok": Trigger [onChannelJoined].
+   * - on "error": Trigger [onChannelJoinError].
+   * - on "timeout": Trigger [onChannelJoinTimeout].
+   *
+   * The Coroutine will be cancelled as soon as an event is collected.
+   *
+   * @return [Unit]
+   */
   private fun launchJoinListener() {
     scope.launch(CoroutineName("CHANNEL_JOIN_LISTENER_$topic")) {
       joinPush.collect { message ->
@@ -316,6 +389,16 @@ class Channel(
     }
   }
 
+  /**
+   * Launches a Coroutine listening for [Channel] events that will either:
+   *
+   * - on [Event.CLOSE]: Trigger [onChannelClose] and cancel the Coroutine.
+   * - on [Event.ERROR]: Trigger [onChannelError].
+   * - on [Event.REPLY]: [tryEmit] the [Message] received from the server.
+   * - on [Event.LEAVE]: Cancel the Coroutine.
+   *
+   * @return [Unit]
+   */
   private fun launchChannelListener() {
     scope.launch(CoroutineName("CHANNEL_RESPONSE_LISTENER_$topic")) {
       this@Channel.collect { message ->
@@ -337,13 +420,13 @@ class Channel(
     }
   }
 
-  /** Sends the Channel's joinPush to the Server */
+  /** Sends the [Channel]'s [joinPush] to the server */
   private suspend fun sendJoin(timeout: Long) {
     state = State.JOINING
     joinPush.resend(timeout)
   }
 
-  /** Rejoins the Channel e.g. after a disconnect */
+  /** Rejoins the [Channel] (e.g. after a disconnect) */
   private suspend fun rejoin(timeout: Long = this.timeout) {
     // Do not attempt to rejoin if the channel is in the process of leaving
     if (isLeaving) return
@@ -358,6 +441,11 @@ class Channel(
   //------------------------------------------------------------------------------
   // Channel Responses Hooks
   //------------------------------------------------------------------------------
+  /**
+   * Resets the [rejoinTimer] and flushes the [pushBuffer].
+   *
+   * @return [Unit]
+   */
   private suspend fun onChannelJoined() {
     // Mark the Channel as joined
     state = State.JOINED
@@ -370,6 +458,11 @@ class Channel(
     pushBuffer.clear()
   }
 
+  /**
+   * Tries to [rejoin] the [Channel] if [Socket.isConnected]
+   *
+   * @return [Unit]
+   */
   private suspend fun onChannelJoinError() {
     state = State.ERRORED
     if (socket.isConnected) {
@@ -379,6 +472,11 @@ class Channel(
     }
   }
 
+  /**
+   * Tries to leave and [rejoin] the [Channel] if [Socket.isConnected]
+   *
+   * @return [Unit]
+   */
   private suspend fun onChannelJoinTimeout() {
     // Log the timeout
     socket.logItems("Channel: timeouts $topic, $joinRef after $timeout ms")
@@ -404,6 +502,11 @@ class Channel(
     }
   }
 
+  /**
+   * Resets the [rejoinTimer] and removes this [Channel] from its [Socket]
+   *
+   * @return [Unit]
+   */
   private fun onChannelClose() {
     // Reset any timer that may be on-going
     rejoinTimer.reset()
@@ -416,6 +519,11 @@ class Channel(
     socket.remove(this@Channel)
   }
 
+  /**
+   * Tries to [rejoin] the [Channel] if [Socket.isConnected]
+   *
+   * @return [Unit]
+   */
   private fun onChannelError(message: Message) {
     // Log that the channel received an error
     socket.logItems("Channel: error $topic ${message.payload}")

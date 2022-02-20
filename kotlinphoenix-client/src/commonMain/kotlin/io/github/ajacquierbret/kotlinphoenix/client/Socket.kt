@@ -144,7 +144,6 @@ abstract class SocketCommon(
   //------------------------------------------------------------------------------
   // Public
   //------------------------------------------------------------------------------
-
   /**
    * Connects to the Phoenix Socket. Suspends until the server acknowledges the connection.
    *
@@ -364,7 +363,6 @@ abstract class SocketCommon(
   //------------------------------------------------------------------------------
   // Heartbeat
   //------------------------------------------------------------------------------
-
   /**
    * Cancels the previous heartbeat if it's running and launches a new one if [skipHeartbeat] is false.
    *
@@ -447,7 +445,6 @@ abstract class SocketCommon(
   //------------------------------------------------------------------------------
   // Connection Transport Hooks
   //------------------------------------------------------------------------------
-
   /**
    * Handles a [SocketEvent.OpenEvent]. Will flush the [sendBuffer] and reset the heartbeat and [reconnectTimer].
    *

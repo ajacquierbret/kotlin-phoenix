@@ -1,0 +1,12 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:io.github.ajacquierbret.kotlinphoenix.client/Socket/endpoint/#/PointingToDeclaration/kotlinphoenix-client/io.github.ajacquierbret.kotlinphoenix.client/-socket/[ios]endpoint.html
+$dokka.location:io.github.ajacquierbret.kotlinphoenix.client/Socket/endpointUrl/#/PointingToDeclaration/kotlinphoenix-client/io.github.ajacquierbret.kotlinphoenix.client/-socket/[ios]endpoint-url.html
+$dokka.location:io.github.ajacquierbret.kotlinphoenix.client/Socket/protocol/#/PointingToDeclaration/kotlinphoenix-client/io.github.ajacquierbret.kotlinphoenix.client/-socket/[ios]protocol.html
+$dokka.location:io.github.ajacquierbret.kotlinphoenix.client/WebSocketTransport/connect/#/PointingToDeclaration/kotlinphoenix-client/io.github.ajacquierbret.kotlinphoenix.client/-web-socket-transport/[ios]connect.html
+$dokka.location:io.github.ajacquierbret.kotlinphoenix.client/WebSocketTransport/disconnect/#kotlin.Int#kotlin.String?/PointingToDeclaration/kotlinphoenix-client/io.github.ajacquierbret.kotlinphoenix.client/-web-socket-transport/[ios]disconnect.html
+$dokka.location:io.github.ajacquierbret.kotlinphoenix.client/WebSocketTransport/send/#kotlin.String/PointingToDeclaration/kotlinphoenix-client/io.github.ajacquierbret.kotlinphoenix.client/-web-socket-transport/[ios]send.html
+module:kotlinphoenix-adapters
+io.github.ajacquierbret.kotlinphoenix.adapters.apollo
+module:kotlinphoenix-client
+io.github.ajacquierbret.kotlinphoenix.client

@@ -12,7 +12,7 @@ jobs:
       - name: Set Gradle properties
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: echo $GRADLE_PROPERTIES | base64 -d > ~/gradle.properties
+        run: mkdir -p ~/.gradle && echo $GRADLE_PROPERTIES | base64 -d > ~/.gradle/gradle.properties
 
       - name: Build documentation
         run: ./gradlew dokkaHtmlMultiModule
@@ -31,7 +31,7 @@ jobs:
       - name: Set Gradle properties
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: echo $GRADLE_PROPERTIES | base64 -d > ~/gradle.properties
+        run: mkdir -p ~/.gradle && echo $GRADLE_PROPERTIES | base64 -d > ~/.gradle/gradle.properties
 
       - name: Maven Publish
         run: ./gradlew publish

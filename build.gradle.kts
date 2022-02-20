@@ -1,4 +1,4 @@
-version = "1.0.3"
+version = "1.0.4"
 
 plugins {
     id("org.jetbrains.dokka") version "1.6.10"
@@ -60,7 +60,7 @@ subprojects {
                                 url.set("https://opensource.org/licenses/MIT")
                             }
                         }
-                        url.set("https://github.com/ajacquierbret/kotlin-phoenix/${artifactId}")
+                        url.set("https://github.com/ajacquierbret/kotlin-phoenix/tree/main/${artifactId}")
                         issueManagement {
                             system.set("Github")
                             url.set("https://github.com/ajacquierbret/kotlin-phoenix/issues")

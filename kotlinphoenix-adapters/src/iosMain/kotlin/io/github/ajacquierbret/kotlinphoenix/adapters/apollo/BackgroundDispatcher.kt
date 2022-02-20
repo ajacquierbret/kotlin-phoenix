@@ -5,8 +5,8 @@ import platform.Foundation.NSThread
 import platform.darwin.*
 import kotlin.coroutines.CoroutineContext
 
+@OptIn(InternalCoroutinesApi::class)
 @ExperimentalCoroutinesApi
-@InternalCoroutinesApi
 internal actual class BackgroundDispatcher actual constructor() {
     init {
         check(NSThread.isMainThread) {
@@ -14,17 +14,15 @@ internal actual class BackgroundDispatcher actual constructor() {
         }
     }
 
-    @Suppress("unused")
     actual val coroutineDispatcher: CoroutineDispatcher
         get() = DefaultDispatcher
 
-    @Suppress("unused")
     actual fun dispose() {
     }
 }
 
+@OptIn(InternalCoroutinesApi::class)
 @ExperimentalCoroutinesApi
-@InternalCoroutinesApi
 private object DefaultDispatcher: CoroutineDispatcher(), Delay {
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {

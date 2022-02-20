@@ -8,6 +8,8 @@ jobs:
     env:
       SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
       SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     steps:
       - name: Uses Checkout Action
         uses: actions/checkout@v2
@@ -20,14 +22,7 @@ jobs:
         with:
           branch: gh-pages
           folder: build/dokka
-  Maven:
-    runs-on: ubuntu-latest
-    env:
-      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-    steps:
+
       - name: Maven Publish
         run: ./gradlew publish \
               -Psonatype.username="$SONATYPE_USERNAME" \
@@ -35,3 +30,4 @@ jobs:
               -Psigning.gnupg.executable=gpg \
               -Psigning.gnupg.keyName="$GPG_KEY_NAME" \
               -Psigning.gnupg.passphrase="$GPG_PASSPHRASE"
+    

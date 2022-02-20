@@ -12,12 +12,6 @@ version = project.rootProject.version
 group = "io.github.ajacquierbret"
 description = "A Phoenix client written in Kotlin, multiplatform and backed by coroutines"
 
-kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
-    binaries.all {
-        binaryOptions["memoryModel"] = "experimental"
-    }
-}
-
 kotlin {
     android()
     iosX64()
@@ -41,11 +35,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt") {
-                    version {
-                        strictly("1.6.0-native-mt")
-                    }
-                }
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
 

@@ -43,41 +43,6 @@ sourceSets {
 }
 ```
 
-Enable coroutines multithreading (required for iOS)
-
-```kotlin
-// gradle.properties
-
-kotlin.native.binary.memoryModel=experimental
-```
-
-If some of your dependencies rely on coroutines, please force the dependency resolution to version `1.6.0-native-mt` with:
-
-```kotlin
-// shared/build.gradle.kts
-
-implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt") {
-    version {
-        strictly("1.6.0-native-mt")
-    }
-}
-```
-
-OR :
-
-```kotlin
-// shared/build.gradle.kts
-
-configurations {
-    all {
-        resolutionStrategy {
-            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
-            force("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt")
-        }
-    }
-}
-```
-
 ## Usage
 
 See each module's documentation for example usages.

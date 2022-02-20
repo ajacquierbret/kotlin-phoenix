@@ -12,7 +12,6 @@ Please feel free to share feedbacks and issues.**
 - Multiplatform (Android & iOS)
 - Built with Coroutines
 - Uses OkHttp3 (v4) & NSURLSession
-- Support for iOS multithreaded coroutines
 
 ## Usage
 

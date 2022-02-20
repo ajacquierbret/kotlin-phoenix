@@ -34,7 +34,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":kotlinphoenix-client"))
-                implementation("com.apollographql.apollo3:apollo-runtime:3.0.0")
+                implementation("com.apollographql.apollo3:apollo-runtime:3.1.0")
             }
         }
         val commonTest by getting {

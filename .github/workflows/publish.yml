@@ -1,0 +1,37 @@
+name: Publish
+on:
+  push:
+    branches: [main]
+jobs:
+  Dokka:
+    runs-on: ubuntu-latest
+    env:
+      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+    steps:
+      - name: Uses Checkout Action
+        uses: actions/checkout@v2
+
+      - name: Build documentation
+        run: ./gradlew dokkaHtmlMultiModule
+
+      - name: Publish documentation
+        uses: JamesIves/github-pages-deploy-action@releases/v4
+        with:
+          branch: gh-pages
+          folder: build/dokka
+  Maven:
+    runs-on: ubuntu-latest
+    env:
+      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    steps:
+      - name: Maven Publish
+        run: ./gradlew publish \
+              -Psonatype.username="$SONATYPE_USERNAME" \
+              -Psonatype.password="$SONATYPE_PASSWORD" \
+              -Psigning.gnupg.executable=gpg \
+              -Psigning.gnupg.keyName="$GPG_KEY_NAME" \
+              -Psigning.gnupg.passphrase="$GPG_PASSPHRASE"
